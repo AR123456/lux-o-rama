@@ -13,3 +13,60 @@
     </div>
   </body>
 </html>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lux Meter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+        background-color: #111;
+        color: white;
+      }
+
+      #luxValue {
+        font-size: 3rem;
+        margin-top: 20px;
+      }
+
+      #status {
+        margin-top: 20px;
+        color: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Light Meter (Lux)</h1>
+    <div id="luxValue">--</div>
+    <div id="status">Waiting for sensor...</div>
+
+    <script>
+      if ("AmbientLightSensor" in window) {
+        try {
+          const sensor = new AmbientLightSensor();
+
+          sensor.addEventListener("reading", () => {
+            document.getElementById("luxValue").textContent =
+              sensor.illuminance.toFixed(2) + " lux";
+          });
+
+          sensor.addEventListener("error", (event) => {
+            document.getElementById("status").textContent =
+              "Error: " + event.error.name;
+          });
+
+          sensor.start();
+        } catch (err) {
+          document.getElementById("status").textContent =
+            "Sensor error: " + err.message;
+        }
+      } else {
+        document.getElementById("status").textContent =
+          "Ambient Light Sensor not supported on this device/browser.";
+      }
+    </script>
+  </body>
+</html>
