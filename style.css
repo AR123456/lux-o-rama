@@ -1,5 +1,11 @@
 /* global styles */
-
+:root {
+  --bg: #030a0f;
+  --primary: #00ff37;
+  --accent: #ff4d00;
+  --mid: #0d2b36;
+  --glow: rgba(0, 255, 231, 0.15);
+}
 * {
   box-sizing: border-box;
   margin: 0;
