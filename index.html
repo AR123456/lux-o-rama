@@ -1,573 +1,627 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>LUX METER</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg: #030a0f;
-    --primary: #00ffe7;
-    --accent: #ff4d00;
-    --mid: #0d2b36;
-    --glow: rgba(0,255,231,0.15);
-  }
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <title>LUX METER</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #030a0f;
+        --primary: #00ffe7;
+        --accent: #ff4d00;
+        --mid: #0d2b36;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--primary);
+        font-family: "Share Tech Mono", monospace;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        user-select: none;
+      }
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.07) 2px,
+          rgba(0, 0, 0, 0.07) 4px
+        );
+        pointer-events: none;
+        z-index: 100;
+      }
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: min(420px, 96vw);
+        position: relative;
+        z-index: 1;
+        padding: 0 4px;
+      }
+      header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 14px;
+        border-bottom: 1px solid rgba(0, 255, 231, 0.2);
+        padding-bottom: 8px;
+      }
+      header h1 {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(2rem, 9vw, 2.8rem);
+        letter-spacing: 0.15em;
+        line-height: 1;
+        text-shadow: 0 0 20px var(--primary);
+      }
+      .subtitle {
+        font-size: 0.55rem;
+        opacity: 0.45;
+        letter-spacing: 0.18em;
+        margin-bottom: 3px;
+      }
+      #video {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        pointer-events: none;
+      }
+      #canvas {
+        display: none;
+      }
+      .dial-container {
+        position: relative;
+        width: min(300px, 82vw);
+        height: min(300px, 82vw);
+        margin: 4px 0;
+      }
+      .dial-svg {
+        width: 100%;
+        height: 100%;
+        transform: rotate(-225deg);
+      }
+      .dial-bg-track {
+        fill: none;
+        stroke: var(--mid);
+        stroke-width: 14;
+        stroke-linecap: round;
+      }
+      .dial-fill-track {
+        fill: none;
+        stroke: var(--primary);
+        stroke-width: 14;
+        stroke-linecap: round;
+        stroke-dasharray: 565;
+        stroke-dashoffset: 565;
+        filter: drop-shadow(0 0 8px var(--primary));
+        transition:
+          stroke-dashoffset 0.25s ease,
+          stroke 0.25s ease;
+      }
+      .dial-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .lux-value {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: clamp(3rem, 16vw, 5rem);
+        line-height: 1;
+        text-shadow: 0 0 30px var(--primary);
+        transition:
+          color 0.25s,
+          text-shadow 0.25s;
+      }
+      .lux-unit {
+        font-size: 0.7rem;
+        letter-spacing: 0.3em;
+        opacity: 0.55;
+        margin-top: -2px;
+      }
+      .lux-label {
+        font-size: 0.52rem;
+        letter-spacing: 0.2em;
+        color: var(--accent);
+        margin-top: 6px;
+        text-shadow: 0 0 10px var(--accent);
+        min-height: 12px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        width: 100%;
+        margin: 8px 0;
+      }
+      .stat-card {
+        background: var(--mid);
+        border: 1px solid rgba(0, 255, 231, 0.1);
+        padding: 8px;
+        text-align: center;
+        clip-path: polygon(
+          0 0,
+          calc(100% - 7px) 0,
+          100% 7px,
+          100% 100%,
+          7px 100%,
+          0 calc(100% - 7px)
+        );
+      }
+      .stat-label {
+        font-size: 0.42rem;
+        letter-spacing: 0.18em;
+        opacity: 0.4;
+        margin-bottom: 3px;
+      }
+      .stat-value {
+        font-family: "Bebas Neue", sans-serif;
+        font-size: 1.2rem;
+      }
+      .log-section {
+        width: 100%;
+        margin-top: 4px;
+      }
+      .log-header {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.48rem;
+        letter-spacing: 0.18em;
+        opacity: 0.38;
+        margin-bottom: 3px;
+        text-transform: uppercase;
+      }
+      #sparkline {
+        width: 100%;
+        height: 44px;
+        display: block;
+      }
+      .spark-line {
+        fill: none;
+        stroke: var(--primary);
+        stroke-width: 1.5;
+      }
+      .spark-area {
+        fill: url(#sparkGrad);
+      }
+      .env-bar {
+        width: 100%;
+        margin-top: 12px;
+        display: flex;
+        gap: 3px;
+      }
+      .env-segment {
+        flex: 1;
+        height: 4px;
+        background: rgba(0, 255, 231, 0.1);
+        transition: background 0.3s;
+      }
+      .env-segment.active {
+        background: var(--primary);
+        box-shadow: 0 0 7px var(--primary);
+      }
+      .env-labels {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.38rem;
+        opacity: 0.32;
+        letter-spacing: 0.08em;
+        margin-top: 3px;
+      }
+      .cam-notice {
+        width: 100%;
+        background: rgba(13, 43, 54, 0.7);
+        border: 1px solid rgba(0, 255, 231, 0.12);
+        padding: 7px 10px;
+        font-size: 0.48rem;
+        letter-spacing: 0.1em;
+        opacity: 0.6;
+        margin-top: 10px;
+        line-height: 1.6;
+      }
+      .controls {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        width: 100%;
+      }
+      button {
+        flex: 1;
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.62rem;
+        letter-spacing: 0.18em;
+        padding: 9px 0;
+        cursor: pointer;
+        text-transform: uppercase;
+        clip-path: polygon(
+          0 0,
+          calc(100% - 6px) 0,
+          100% 6px,
+          100% 100%,
+          6px 100%,
+          0 calc(100% - 6px)
+        );
+        transition:
+          background 0.15s,
+          color 0.15s,
+          box-shadow 0.15s;
+        -webkit-tap-highlight-color: transparent;
+      }
+      button:active {
+        background: var(--primary);
+        color: var(--bg);
+        box-shadow: 0 0 18px var(--primary);
+      }
+      button.danger {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      button.danger:active {
+        background: var(--accent);
+        color: var(--bg);
+        box-shadow: 0 0 18px var(--accent);
+      }
+      #status {
+        font-size: 0.52rem;
+        letter-spacing: 0.13em;
+        opacity: 0.5;
+        margin-top: 10px;
+        min-height: 13px;
+        text-align: center;
+      }
+      .dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        margin-right: 5px;
+        vertical-align: middle;
+      }
+      .dot.active {
+        background: var(--primary);
+        box-shadow: 0 0 6px var(--primary);
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>LUX<br />METER</h1>
+        <div style="text-align: right">
+          <div class="subtitle">CAMERA-BASED ESTIMATOR</div>
+          <div class="subtitle">v2.0 · GOOGLE PIXEL</div>
+        </div>
+      </header>
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+      <video id="video" autoplay playsinline muted></video>
+      <canvas id="canvas"></canvas>
 
-  body {
-    background: var(--bg);
-    color: var(--primary);
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    user-select: none;
-  }
+      <div class="dial-container">
+        <svg class="dial-svg" viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(0,255,231,0.35)" />
+              <stop offset="100%" stop-color="rgba(0,255,231,0)" />
+            </linearGradient>
+          </defs>
+          <circle
+            class="dial-bg-track"
+            cx="100"
+            cy="100"
+            r="90"
+            stroke-dasharray="565"
+            stroke-dashoffset="0"
+          />
+          <circle
+            id="dialFill"
+            class="dial-fill-track"
+            cx="100"
+            cy="100"
+            r="90"
+          />
+        </svg>
+        <div class="dial-center">
+          <div class="lux-value" id="luxValue">---</div>
+          <div class="lux-unit">LUX (EST)</div>
+          <div class="lux-label" id="luxLabel">AWAITING CAMERA</div>
+        </div>
+      </div>
 
-  /* Scanline overlay */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    z-index: 100;
-  }
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-label">Min</div>
+          <div class="stat-value" id="minVal">---</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg</div>
+          <div class="stat-value" id="avgVal">---</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Max</div>
+          <div class="stat-value" id="maxVal">---</div>
+        </div>
+      </div>
 
-  /* Noise texture */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: -50%;
-    width: 200%;
-    height: 200%;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    opacity: 0.3;
-    pointer-events: none;
-    animation: flicker 8s infinite;
-  }
+      <div class="log-section">
+        <div class="log-header">
+          <span>HISTORY</span>
+          <span id="sampleCount">0 samples</span>
+        </div>
+        <svg id="sparkline" preserveAspectRatio="none" viewBox="0 0 300 44">
+          <path id="sparkArea" class="spark-area" d="" />
+          <path id="sparkPath" class="spark-line" d="" />
+        </svg>
+      </div>
 
-  @keyframes flicker {
-    0%, 95%, 100% { opacity: 0.3; }
-    96% { opacity: 0.2; }
-    97% { opacity: 0.35; }
-  }
+      <div class="env-bar">
+        <div class="env-segment" id="seg0"></div>
+        <div class="env-segment" id="seg1"></div>
+        <div class="env-segment" id="seg2"></div>
+        <div class="env-segment" id="seg3"></div>
+        <div class="env-segment" id="seg4"></div>
+        <div class="env-segment" id="seg5"></div>
+      </div>
+      <div class="env-labels">
+        <span>DARK</span><span>DIM</span><span>INDOOR</span><span>BRIGHT</span
+        ><span>OUTDOOR</span><span>SUN</span>
+      </div>
 
-  .wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-    width: min(420px, 96vw);
-    position: relative;
-    z-index: 1;
-  }
+      <div class="cam-notice">
+        ⚠ CAMERA MODE — Points rear camera at scene. Cover lens = ~0 lux.<br />
+        Accuracy: ±30% vs calibrated meter. Best for relative comparisons.
+      </div>
 
-  header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 20px;
-    border-bottom: 1px solid rgba(0,255,231,0.2);
-    padding-bottom: 10px;
-  }
+      <div class="controls">
+        <button id="startBtn" onclick="startCamera()">▶ START</button>
+        <button id="stopBtn" onclick="stopCamera()" style="display: none">
+          ■ STOP
+        </button>
+        <button class="danger" onclick="resetStats()">↺ RESET</button>
+      </div>
 
-  header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.2rem, 10vw, 3.2rem);
-    letter-spacing: 0.15em;
-    line-height: 1;
-    text-shadow: 0 0 20px var(--primary), 0 0 60px rgba(0,255,231,0.3);
-  }
-
-  .subtitle {
-    font-size: 0.6rem;
-    opacity: 0.5;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  /* Main circle display */
-  .dial-container {
-    position: relative;
-    width: min(340px, 90vw);
-    height: min(340px, 90vw);
-    margin: 10px 0;
-  }
-
-  .dial-svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-225deg);
-  }
-
-  .dial-bg-track {
-    fill: none;
-    stroke: var(--mid);
-    stroke-width: 12;
-    stroke-linecap: round;
-  }
-
-  .dial-fill-track {
-    fill: none;
-    stroke: var(--primary);
-    stroke-width: 12;
-    stroke-linecap: round;
-    stroke-dasharray: 565;
-    stroke-dashoffset: 565;
-    filter: drop-shadow(0 0 8px var(--primary));
-    transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
-  }
-
-  .dial-center {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .lux-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(3.5rem, 18vw, 5.5rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    text-shadow: 0 0 30px var(--primary), 0 0 80px rgba(0,255,231,0.2);
-    transition: color 0.3s ease;
-  }
-
-  .lux-unit {
-    font-size: 0.75rem;
-    letter-spacing: 0.3em;
-    opacity: 0.6;
-    margin-top: -4px;
-  }
-
-  .lux-label {
-    font-size: 0.55rem;
-    letter-spacing: 0.25em;
-    color: var(--accent);
-    margin-top: 8px;
-    min-height: 12px;
-    text-shadow: 0 0 10px var(--accent);
-    transition: opacity 0.3s;
-  }
-
-  /* Stats row */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    width: 100%;
-    margin: 10px 0;
-  }
-
-  .stat-card {
-    background: var(--mid);
-    border: 1px solid rgba(0,255,231,0.1);
-    padding: 10px;
-    text-align: center;
-    position: relative;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
-  }
-
-  .stat-label {
-    font-size: 0.45rem;
-    letter-spacing: 0.2em;
-    opacity: 0.45;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .stat-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
-    letter-spacing: 0.05em;
-  }
-
-  /* Log / sparkline */
-  .log-section {
-    width: 100%;
-    margin-top: 6px;
-  }
-
-  .log-header {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.5rem;
-    letter-spacing: 0.2em;
-    opacity: 0.4;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-  }
-
-  #sparkline {
-    width: 100%;
-    height: 50px;
-    display: block;
-  }
-
-  .spark-line { fill: none; stroke: var(--primary); stroke-width: 1.5; }
-  .spark-area { fill: url(#sparkGrad); }
-
-  /* Environment label bar */
-  .env-bar {
-    width: 100%;
-    margin-top: 14px;
-    display: flex;
-    gap: 4px;
-  }
-
-  .env-segment {
-    flex: 1;
-    height: 4px;
-    background: rgba(0,255,231,0.1);
-    transition: background 0.3s;
-    position: relative;
-  }
-
-  .env-segment.active {
-    background: var(--primary);
-    box-shadow: 0 0 8px var(--primary);
-  }
-
-  .env-labels {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.42rem;
-    opacity: 0.35;
-    letter-spacing: 0.1em;
-    margin-top: 4px;
-  }
-
-  /* Buttons */
-  .controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 16px;
-    width: 100%;
-  }
-
-  button {
-    flex: 1;
-    background: transparent;
-    border: 1px solid var(--primary);
-    color: var(--primary);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.65rem;
-    letter-spacing: 0.2em;
-    padding: 10px 0;
-    cursor: pointer;
-    text-transform: uppercase;
-    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-  }
-
-  button:hover, button:active {
-    background: var(--primary);
-    color: var(--bg);
-    box-shadow: 0 0 20px var(--primary);
-  }
-
-  button.danger {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  button.danger:hover {
-    background: var(--accent);
-    color: var(--bg);
-    box-shadow: 0 0 20px var(--accent);
-  }
-
-  /* Status */
-  #status {
-    font-size: 0.55rem;
-    letter-spacing: 0.15em;
-    opacity: 0.5;
-    margin-top: 12px;
-    min-height: 14px;
-    text-align: center;
-  }
-
-  .dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-
-  .dot.active {
-    background: var(--primary);
-    box-shadow: 0 0 6px var(--primary);
-    animation: pulse 1s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-</style>
-</head>
-<body>
-<div class="wrapper">
-  <header>
-    <h1>LUX<br>METER</h1>
-    <div style="text-align:right">
-      <div class="subtitle">Ambient Light Sensor</div>
-      <div class="subtitle">v1.0 · Google Pixel</div>
+      <div id="status">
+        <span class="dot" id="dot"></span>CAMERA NOT STARTED
+      </div>
     </div>
-  </header>
 
-  <div class="dial-container">
-    <svg class="dial-svg" viewBox="0 0 200 200">
-      <defs>
-        <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(0,255,231,0.35)"/>
-          <stop offset="100%" stop-color="rgba(0,255,231,0)"/>
-        </linearGradient>
-      </defs>
-      <circle class="dial-bg-track" cx="100" cy="100" r="90"
-        stroke-dasharray="565" stroke-dashoffset="0"/>
-      <circle id="dialFill" class="dial-fill-track" cx="100" cy="100" r="90"/>
-    </svg>
-    <div class="dial-center">
-      <div class="lux-value" id="luxValue">---</div>
-      <div class="lux-unit">LUX</div>
-      <div class="lux-label" id="luxLabel">AWAITING SENSOR</div>
-    </div>
-  </div>
+    <script>
+      let stream = null,
+        rafId = null;
+      let readings = [];
+      let minLux = Infinity,
+        maxLux = -Infinity,
+        sumLux = 0,
+        countLux = 0;
+      const MAX_HISTORY = 120;
+      const video = document.getElementById("video");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      const SAMPLE_W = 64,
+        SAMPLE_H = 64;
 
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-label">Min</div>
-      <div class="stat-value" id="minVal">---</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Avg</div>
-      <div class="stat-value" id="avgVal">---</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Max</div>
-      <div class="stat-value" id="maxVal">---</div>
-    </div>
-  </div>
-
-  <div class="log-section">
-    <div class="log-header">
-      <span>HISTORY (60s)</span>
-      <span id="sampleCount">0 samples</span>
-    </div>
-    <svg id="sparkline" preserveAspectRatio="none" viewBox="0 0 300 50">
-      <path id="sparkArea" class="spark-area" d=""/>
-      <path id="sparkPath" class="spark-line" d=""/>
-    </svg>
-  </div>
-
-  <div class="env-bar">
-    <div class="env-segment" id="seg0"></div>
-    <div class="env-segment" id="seg1"></div>
-    <div class="env-segment" id="seg2"></div>
-    <div class="env-segment" id="seg3"></div>
-    <div class="env-segment" id="seg4"></div>
-    <div class="env-segment" id="seg5"></div>
-  </div>
-  <div class="env-labels">
-    <span>DARK</span>
-    <span>DIM</span>
-    <span>INDOOR</span>
-    <span>BRIGHT</span>
-    <span>OUTDOOR</span>
-    <span>DIRECT SUN</span>
-  </div>
-
-  <div class="controls">
-    <button id="startBtn" onclick="startSensor()">▶ START</button>
-    <button id="stopBtn" onclick="stopSensor()" style="display:none">■ STOP</button>
-    <button class="danger" onclick="resetStats()">↺ RESET</button>
-  </div>
-
-  <div id="status"><span class="dot" id="dot"></span>SENSOR NOT STARTED</div>
-</div>
-
-<script>
-  let sensor = null;
-  let readings = [];
-  let minLux = Infinity, maxLux = -Infinity, sumLux = 0, countLux = 0;
-  const MAX_HISTORY = 120;
-
-  // Lux thresholds for env segments
-  const ENV_THRESHOLDS = [1, 50, 500, 5000, 50000, 100001];
-  const ENV_LABELS = ['DARK', 'DIM', 'INDOOR', 'BRIGHT', 'OUTDOOR', 'DIRECT SUN'];
-
-  function getLuxLabel(lux) {
-    if (lux < 1) return 'DARK';
-    if (lux < 50) return 'DIM';
-    if (lux < 500) return 'INDOOR';
-    if (lux < 5000) return 'BRIGHT INDOOR';
-    if (lux < 50000) return 'OUTDOOR';
-    return 'DIRECT SUNLIGHT';
-  }
-
-  function getDialOffset(lux) {
-    // Log scale: 0 lux → 0%, 100000+ lux → 100%
-    if (lux <= 0) return 565;
-    const pct = Math.min(Math.log10(lux + 1) / Math.log10(100001), 1);
-    return 565 * (1 - pct);
-  }
-
-  function getDialColor(lux) {
-    if (lux < 50) return '#00ffe7';
-    if (lux < 5000) return '#ffe600';
-    return '#ff4d00';
-  }
-
-  function updateDisplay(lux) {
-    const val = document.getElementById('luxValue');
-    const label = document.getElementById('luxLabel');
-    const dial = document.getElementById('dialFill');
-
-    val.textContent = lux < 10 ? lux.toFixed(1) : Math.round(lux);
-    label.textContent = getLuxLabel(lux);
-
-    const color = getDialColor(lux);
-    val.style.color = color;
-    val.style.textShadow = `0 0 30px ${color}, 0 0 80px ${color}33`;
-    dial.style.strokeDashoffset = getDialOffset(lux);
-    dial.style.stroke = color;
-    dial.style.filter = `drop-shadow(0 0 8px ${color})`;
-
-    // Update stats
-    minLux = Math.min(minLux, lux);
-    maxLux = Math.max(maxLux, lux);
-    sumLux += lux;
-    countLux++;
-
-    document.getElementById('minVal').textContent = minLux < 10 ? minLux.toFixed(1) : Math.round(minLux);
-    document.getElementById('maxVal').textContent = maxLux < 10 ? maxLux.toFixed(1) : Math.round(maxLux);
-    document.getElementById('avgVal').textContent =
-      (sumLux / countLux) < 10 ? (sumLux / countLux).toFixed(1) : Math.round(sumLux / countLux);
-
-    // History
-    readings.push(lux);
-    if (readings.length > MAX_HISTORY) readings.shift();
-    document.getElementById('sampleCount').textContent = `${readings.length} samples`;
-    updateSparkline();
-    updateEnvBar(lux);
-  }
-
-  function updateSparkline() {
-    if (readings.length < 2) return;
-    const w = 300, h = 50;
-    const maxV = Math.max(...readings) || 1;
-    const minV = Math.min(...readings);
-    const range = maxV - minV || 1;
-    const pts = readings.map((v, i) => {
-      const x = (i / (readings.length - 1)) * w;
-      const y = h - ((v - minV) / range) * (h - 6) - 3;
-      return `${x},${y}`;
-    });
-    const d = 'M' + pts.join('L');
-    const area = d + `L${w},${h} L0,${h}Z`;
-    document.getElementById('sparkPath').setAttribute('d', d);
-    document.getElementById('sparkArea').setAttribute('d', area);
-  }
-
-  function updateEnvBar(lux) {
-    let activeIdx = 0;
-    if (lux >= 50000) activeIdx = 5;
-    else if (lux >= 5000) activeIdx = 4;
-    else if (lux >= 500) activeIdx = 3;
-    else if (lux >= 50) activeIdx = 2;
-    else if (lux >= 1) activeIdx = 1;
-    else activeIdx = 0;
-
-    for (let i = 0; i < 6; i++) {
-      const seg = document.getElementById(`seg${i}`);
-      seg.classList.toggle('active', i <= activeIdx);
-    }
-  }
-
-  function setStatus(msg, active) {
-    document.getElementById('status').innerHTML =
-      `<span class="dot${active ? ' active' : ''}"></span>${msg}`;
-  }
-
-  async function startSensor() {
-    if (!('AmbientLightSensor' in window)) {
-      setStatus('AmbientLightSensor API NOT SUPPORTED ON THIS BROWSER/DEVICE', false);
-      document.getElementById('luxLabel').textContent = 'UNSUPPORTED';
-      return;
-    }
-
-    try {
-      // Request permission
-      const result = await navigator.permissions.query({ name: 'ambient-light-sensor' });
-      if (result.state === 'denied') {
-        setStatus('PERMISSION DENIED — CHECK SITE SETTINGS', false);
-        return;
+      // Convert average perceptual luminance (0-255) to estimated lux
+      // Camera auto-exposure compresses highlights, so we use a power curve
+      // k=100000 maps a fully white frame (~overexposed outdoor) to ~100k lux
+      function luminanceToLux(avg) {
+        const norm = avg / 255;
+        return Math.round(100000 * Math.pow(norm, 2.2));
       }
 
-      sensor = new AmbientLightSensor({ frequency: 5 });
+      function getAverageLuminance() {
+        canvas.width = SAMPLE_W;
+        canvas.height = SAMPLE_H;
+        ctx.drawImage(video, 0, 0, SAMPLE_W, SAMPLE_H);
+        const data = ctx.getImageData(0, 0, SAMPLE_W, SAMPLE_H).data;
+        let sum = 0;
+        for (let i = 0; i < data.length; i += 4) {
+          // ITU-R BT.709 perceptual weights
+          sum += 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+        }
+        return sum / (SAMPLE_W * SAMPLE_H);
+      }
 
-      sensor.addEventListener('reading', () => {
-        updateDisplay(sensor.illuminance);
-      });
+      function getLuxLabel(lux) {
+        if (lux < 1) return "DARK";
+        if (lux < 50) return "DIM / CANDLELIGHT";
+        if (lux < 500) return "INDOOR LIGHTING";
+        if (lux < 5000) return "BRIGHT INDOOR";
+        if (lux < 50000) return "OUTDOOR / OVERCAST";
+        return "DIRECT SUNLIGHT";
+      }
 
-      sensor.addEventListener('error', (e) => {
-        setStatus(`SENSOR ERROR: ${e.error.name}`, false);
-        stopSensor();
-      });
+      function getDialOffset(lux) {
+        if (lux <= 0) return 565;
+        return (
+          565 * (1 - Math.min(Math.log10(lux + 1) / Math.log10(100001), 1))
+        );
+      }
 
-      sensor.start();
-      setStatus('READING AMBIENT LIGHT SENSOR...', true);
-      document.getElementById('startBtn').style.display = 'none';
-      document.getElementById('stopBtn').style.display = '';
+      function getColor(lux) {
+        if (lux < 50) return "#00ffe7";
+        if (lux < 5000) return "#ffe600";
+        return "#ff4d00";
+      }
 
-    } catch (e) {
-      setStatus(`ERROR: ${e.message}`, false);
-    }
-  }
+      function fmt(v) {
+        return v < 10 ? v.toFixed(1) : Math.round(v);
+      }
 
-  function stopSensor() {
-    if (sensor) {
-      sensor.stop();
-      sensor = null;
-    }
-    setStatus('SENSOR STOPPED', false);
-    document.getElementById('startBtn').style.display = '';
-    document.getElementById('stopBtn').style.display = 'none';
-  }
+      function updateDisplay(lux) {
+        const color = getColor(lux);
+        const val = document.getElementById("luxValue");
+        val.textContent = fmt(lux);
+        val.style.color = color;
+        val.style.textShadow = `0 0 30px ${color}, 0 0 70px ${color}44`;
 
-  function resetStats() {
-    minLux = Infinity; maxLux = -Infinity; sumLux = 0; countLux = 0;
-    readings = [];
-    document.getElementById('minVal').textContent = '---';
-    document.getElementById('maxVal').textContent = '---';
-    document.getElementById('avgVal').textContent = '---';
-    document.getElementById('sampleCount').textContent = '0 samples';
-    document.getElementById('sparkPath').setAttribute('d', '');
-    document.getElementById('sparkArea').setAttribute('d', '');
-    for (let i = 0; i < 6; i++) document.getElementById(`seg${i}`).classList.remove('active');
-  }
-</script>
-</body>
+        document.getElementById("luxLabel").textContent = getLuxLabel(lux);
+
+        const dial = document.getElementById("dialFill");
+        dial.style.strokeDashoffset = getDialOffset(lux);
+        dial.style.stroke = color;
+        dial.style.filter = `drop-shadow(0 0 8px ${color})`;
+
+        minLux = Math.min(minLux, lux);
+        maxLux = Math.max(maxLux, lux);
+        sumLux += lux;
+        countLux++;
+        document.getElementById("minVal").textContent = fmt(minLux);
+        document.getElementById("maxVal").textContent = fmt(maxLux);
+        document.getElementById("avgVal").textContent = fmt(sumLux / countLux);
+
+        readings.push(lux);
+        if (readings.length > MAX_HISTORY) readings.shift();
+        document.getElementById("sampleCount").textContent =
+          readings.length + " samples";
+        updateSparkline();
+        updateEnvBar(lux);
+      }
+
+      function updateSparkline() {
+        if (readings.length < 2) return;
+        const w = 300,
+          h = 44;
+        const maxV = Math.max(...readings) || 1;
+        const minV = Math.min(...readings);
+        const range = maxV - minV || 1;
+        const pts = readings.map((v, i) => {
+          return (
+            ((i / (readings.length - 1)) * w).toFixed(1) +
+            "," +
+            (h - ((v - minV) / range) * (h - 6) - 3).toFixed(1)
+          );
+        });
+        const d = "M" + pts.join("L");
+        document.getElementById("sparkPath").setAttribute("d", d);
+        document
+          .getElementById("sparkArea")
+          .setAttribute("d", d + "L" + w + "," + h + " L0," + h + "Z");
+      }
+
+      function updateEnvBar(lux) {
+        let idx =
+          lux < 1
+            ? 0
+            : lux < 50
+              ? 1
+              : lux < 500
+                ? 2
+                : lux < 5000
+                  ? 3
+                  : lux < 50000
+                    ? 4
+                    : 5;
+        for (let i = 0; i < 6; i++)
+          document
+            .getElementById("seg" + i)
+            .classList.toggle("active", i <= idx);
+      }
+
+      function setStatus(msg, active) {
+        document.getElementById("status").innerHTML =
+          '<span class="dot' + (active ? " active" : "") + '"></span>' + msg;
+      }
+
+      function loop() {
+        if (!stream) return;
+        try {
+          updateDisplay(luminanceToLux(getAverageLuminance()));
+        } catch (e) {}
+        rafId = setTimeout(() => requestAnimationFrame(loop), 100);
+      }
+
+      async function startCamera() {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: { exact: "environment" },
+              width: { ideal: 640 },
+              height: { ideal: 480 },
+            },
+            audio: false,
+          });
+        } catch (e) {
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: true,
+              audio: false,
+            });
+          } catch (e2) {
+            setStatus("CAMERA ERROR: " + e2.message, false);
+            return;
+          }
+        }
+        video.srcObject = stream;
+        await video.play();
+        setStatus("READING VIA REAR CAMERA...", true);
+        document.getElementById("startBtn").style.display = "none";
+        document.getElementById("stopBtn").style.display = "";
+        requestAnimationFrame(loop);
+      }
+
+      function stopCamera() {
+        clearTimeout(rafId);
+        if (stream) {
+          stream.getTracks().forEach((t) => t.stop());
+          stream = null;
+        }
+        setStatus("CAMERA STOPPED", false);
+        document.getElementById("startBtn").style.display = "";
+        document.getElementById("stopBtn").style.display = "none";
+      }
+
+      function resetStats() {
+        minLux = Infinity;
+        maxLux = -Infinity;
+        sumLux = 0;
+        countLux = 0;
+        readings = [];
+        ["minVal", "maxVal", "avgVal"].forEach(
+          (id) => (document.getElementById(id).textContent = "---"),
+        );
+        document.getElementById("sampleCount").textContent = "0 samples";
+        document.getElementById("sparkPath").setAttribute("d", "");
+        document.getElementById("sparkArea").setAttribute("d", "");
+        for (let i = 0; i < 6; i++)
+          document.getElementById("seg" + i).classList.remove("active");
+      }
+    </script>
+  </body>
 </html>
