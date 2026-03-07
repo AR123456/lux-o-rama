@@ -74,3 +74,13 @@ body::before {
   position: relative;
   z-index: 1;
 }
+
+header {
+  width: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(0, 255, 231, 0.2);
+  padding-bottom: 10px;
+}
