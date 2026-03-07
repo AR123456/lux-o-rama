@@ -1,7 +1,7 @@
 /* global styles */
 :root {
   --bg: #030a0f;
-  --primary: #00ff37;
+  --primary: #00ffe7;
   --accent: #ff4d00;
   --mid: #0d2b36;
   --glow: rgba(0, 255, 231, 0.15);
@@ -12,4 +12,13 @@
   padding: 0;
 }
 body {
+  background: var(--bg);
+  color: var(--primary);
+  font-family: "Share Tech Mono", monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
