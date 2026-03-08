@@ -100,3 +100,10 @@ header h1 {
   text-transform: uppercase;
   margin-bottom: 4px;
 }
+/* main circle display  */
+.dial-container {
+  position: relative;
+  width: min(340px, 90vw);
+  height: min(340px, 90vw);
+  margin: 10px 0;
+}
