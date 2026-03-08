@@ -93,3 +93,10 @@ header h1 {
     0 0 20px var(--primary),
     0 0 60px rgba(0, 255, 231, 0.3);
 }
+.subtitle {
+  font-size: 0.6rem;
+  opacity: 0.5;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
