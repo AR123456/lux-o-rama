@@ -118,3 +118,15 @@ header h1 {
   stroke-width: 12;
   stroke-linecap: round;
 }
+.dial-fill-track {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 12;
+  stroke-linecap: round;
+  stroke-dasharray: 565;
+  stroke-dashoffset: 565;
+  filter: drop-shadow(0, 0, 8px var(--primary));
+  transition:
+    stroke-dashoffset 0.3s ease,
+    stroke 0.3s ease;
+}
