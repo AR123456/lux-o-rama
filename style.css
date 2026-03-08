@@ -112,3 +112,9 @@ header h1 {
   height: 100%;
   transform: rotate(-225deg);
 }
+.dial-bg-track {
+  fill: none;
+  stroke: var(--mid);
+  stroke-width: 12;
+  stroke-linecap: round;
+}
