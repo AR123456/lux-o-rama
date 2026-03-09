@@ -148,3 +148,9 @@ header h1 {
     0 0 80px rgba(0, 255, 231, 0.2);
   transition: color 0.3s ease;
 }
+.lux-unit {
+  font-size: 0.75rem;
+  letter-spacing: 0.3rem;
+  opacity: 0.6;
+  margin-top: -4px;
+}
