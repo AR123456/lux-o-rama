@@ -186,3 +186,11 @@ header h1 {
     0 calc(100% - 8px)
   );
 }
+/* this div makes stats kind of small */
+.stat-label {
+  /* font-size: 0.45rem;
+  letter-spacing: 0.2em;
+  opacity: 0.45;
+  text-transform: uppercase;
+  margin-bottom: 4px; */
+}
