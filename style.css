@@ -171,3 +171,18 @@ header h1 {
   width: 100%;
   margin: 10px 0;
 }
+.stat-card {
+  background: var(--mid);
+  border: 1px solid rgba(0, 255, 231, 0.1);
+  padding: 10px;
+  text-align: center;
+  position: relative;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 8px) 0,
+    100% 8px,
+    100% 100%,
+    8px 100%,
+    0 calc(100% - 8px)
+  );
+}
