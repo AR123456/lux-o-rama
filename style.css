@@ -138,3 +138,13 @@ header h1 {
   align-items: center;
   justify-content: center;
 }
+.lux-value {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(3.5rem, 18vh, 5.5rem);
+  line-height: 1;
+  letter-spacing: -0.02rem;
+  text-shadow:
+    0 0 30px var(--primary),
+    0 0 80px rgba(0, 255, 231, 0.2);
+  transition: color 0.3s ease;
+}
