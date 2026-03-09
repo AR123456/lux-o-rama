@@ -163,3 +163,11 @@ header h1 {
   text-shadow: 0 0 1-px var(--accent);
   transition: opacity 0.3s;
 }
+/* stats row */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+  margin: 10px 0;
+}
