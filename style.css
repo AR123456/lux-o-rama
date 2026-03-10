@@ -218,3 +218,19 @@ header h1 {
   height: 50px;
   display: block;
 }
+.spark-line {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 1.5;
+}
+.spark-area {
+  fill: url(#sparkGrad);
+}
+
+/* Environment label bar */
+.env-bar {
+  width: 100%;
+  margin-top: 14px;
+  display: flex;
+  gap: 4px;
+}
