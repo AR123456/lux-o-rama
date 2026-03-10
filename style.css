@@ -234,3 +234,10 @@ header h1 {
   display: flex;
   gap: 4px;
 }
+.env-segment {
+  flex: 1;
+  height: 4px;
+  background: rgba(0, 255, 231, 0.1);
+  transition: background 0.3s;
+  position: relative;
+}
