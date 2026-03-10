@@ -199,3 +199,8 @@ header h1 {
   font-size: 1.3rem;
   letter-spacing: 0.05em;
 }
+/* log sparkline */
+.log-section {
+  width: 100%;
+  margin-top: 6px;
+}
