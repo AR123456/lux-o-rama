@@ -188,9 +188,14 @@ header h1 {
 }
 /* this div makes stats kind of small */
 .stat-label {
-  /* font-size: 0.45rem;
+  font-size: 0.45rem;
   letter-spacing: 0.2em;
   opacity: 0.45;
   text-transform: uppercase;
-  margin-bottom: 4px; */
+  margin-bottom: 4px;
+}
+.stat-value {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
 }
