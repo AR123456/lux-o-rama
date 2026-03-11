@@ -241,3 +241,16 @@ header h1 {
   transition: background 0.3s;
   position: relative;
 }
+.env-segment.active {
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+}
+.env-labels {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.42rem;
+  opacity: 0.35;
+  letter-spacing: 0.1em;
+  margin-top: 4px;
+}
