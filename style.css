@@ -300,3 +300,13 @@ button.danger:hover {
   color: var(--bg);
   box-shadow: 0 0 20px var(--accent);
 }
+
+/* Status */
+#status {
+  font-size: 0.55rem;
+  letter-spacing: 0.15em;
+  opacity: 0.5;
+  margin-top: 12px;
+  min-height: 14px;
+  text-align: center;
+}
