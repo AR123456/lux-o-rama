@@ -319,3 +319,8 @@ button.danger:hover {
   margin-right: 6px;
   vertical-align: middle;
 }
+.dot.active {
+  background: var(--primary);
+  box-shadow: 0 0 6px var(--primary);
+  animation: pulse 1s infinite;
+}
