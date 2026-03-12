@@ -310,3 +310,12 @@ button.danger:hover {
   min-height: 14px;
   text-align: center;
 }
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  vertical-align: middle;
+}
