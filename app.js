@@ -27,3 +27,8 @@ function getDialColor(lux) {
   if (lux < 5000) return "#ffe600";
   return "#ff4d00";
 }
+function updateDisplay(lux) {
+  const val = document.getElementById("luxValue");
+  const label = document.getElementById("luxLabel");
+  const dial = document.getElementById("dialFill");
+}
