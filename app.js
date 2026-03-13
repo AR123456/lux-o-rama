@@ -39,4 +39,18 @@ function updateDisplay(lux) {
   dial.style.strokeDashoffset = getDialOffset(lux);
   dial.style.stroke = color;
   dial.style.filter = `drop-shadow(0 0 8px ${color})`;
+  // Update stats
+  minLux = Math.min(minLux, lux);
+  maxLux = Math.max(maxLux, lux);
+  sumLux += lux;
+  countLux++;
+
+  document.getElementById("minVal").textContent =
+    minLux < 10 ? minLux.toFixed(1) : Math.round(minLux);
+  document.getElementById("maxVal").textContent =
+    maxLux < 10 ? maxLux.toFixed(1) : Math.round(maxLux);
+  document.getElementById("avgVal").textContent =
+    sumLux / countLux < 10
+      ? (sumLux / countLux).toFixed(1)
+      : Math.round(sumLux / countLux);
 }
