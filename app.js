@@ -31,4 +31,12 @@ function updateDisplay(lux) {
   const val = document.getElementById("luxValue");
   const label = document.getElementById("luxLabel");
   const dial = document.getElementById("dialFill");
+  val.textContent - lux < 10 ? lex.toFixed(1) : Math.round(lux);
+  label.textContent = getLuxLabel(lux);
+  const color = getDialColor(lux);
+  val.style.color = color;
+  val.style.textShadow = `0 0 30px ${color}, 0 0 80px ${color}33`;
+  dial.style.strokeDashoffset = getDialOffset(lux);
+  dial.style.stroke = color;
+  dial.style.filter = `drop-shadow(0 0 8px ${color})`;
 }
