@@ -53,4 +53,28 @@ function updateDisplay(lux) {
     sumLux / countLux < 10
       ? (sumLux / countLux).toFixed(1)
       : Math.round(sumLux / countLux);
+  // History
+  readings.push(lux);
+  if (readings.length > MAX_HISTORY) readings.shift();
+  document.getElementById("sampleCount").textContent =
+    `${readings.length} samples`;
+  updateSparkline();
+  updateEnvBar(lux);
+}
+function updateSparkline() {
+  if (readings.length < 2) return;
+  const w = 300,
+    h = 50;
+  const maxV = Math.max(...readings) || 1;
+  const minV = Math.min(...readings);
+  const range = maxV - minV || 1;
+  const pts = readings.map((v, i) => {
+    const x = (i / (readings.length - 1)) * w;
+    const y = h - ((v - minV) / range) * (h - 6) - 3;
+    return `${x},${y}`;
+  });
+  const d = "M" + pts.join("L");
+  const area = d + `L${w},${h} L0,${h}Z`;
+  document.getElementById("sparkPath").setAttribute("d", d);
+  document.getElementById("sparkArea").setAttribute("d", area);
 }
