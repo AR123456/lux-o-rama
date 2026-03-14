@@ -61,3 +61,34 @@ function updateDisplay(lux) {
   updateSparkline();
   updateEnvBar(lux);
 }
+function updateSparkline() {
+  if (readings.length < 2) return;
+  const w = 300,
+    h = 50;
+  const maxV = Math.max(...readings) || 1;
+  const minV = Math.min(...readings);
+  const range = maxV - minV || 1;
+  const pts = readings.map((v, i) => {
+    const x = (i / (readings.length - 1)) * w;
+    const y = h - ((v - minV) / range) * (h - 6) - 3;
+    return `${x},${y}`;
+  });
+  const d = "M" + pts.join("L");
+  const area = d + `L${w},${h} L0,${h}Z`;
+  document.getElementById("sparkPath").setAttribute("d", d);
+  document.getElementById("sparkArea").setAttribute("d", area);
+}
+function updateEnvBar(lux) {
+  let activeIdx = 0;
+  if (lux >= 50000) activeIdx = 5;
+  else if (lux >= 5000) activeIdx = 4;
+  else if (lux >= 500) activeIdx = 3;
+  else if (lux >= 50) activeIdx = 2;
+  else if (lux >= 1) activeIdx = 1;
+  else activeIdx = 0;
+
+  for (let i = 0; i < 6; i++) {
+    const seg = document.getElementById(`seg${i}`);
+    seg.classList.toggle("active", i <= activeIdx);
+  }
+}
