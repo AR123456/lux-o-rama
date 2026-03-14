@@ -1,3 +1,4 @@
+/* global styles */
 :root {
   --bg: #030a0f;
   --primary: #00ffe7;
@@ -5,13 +6,11 @@
   --mid: #0d2b36;
   --glow: rgba(0, 255, 231, 0.15);
 }
-
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
-
 body {
   background: var(--bg);
   color: var(--primary);
@@ -53,7 +52,6 @@ body::before {
   pointer-events: none;
   animation: flicker 8s infinite;
 }
-
 @keyframes flicker {
   0%,
   95%,
@@ -67,19 +65,18 @@ body::before {
     opacity: 0.35;
   }
 }
-
 .wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0;
-  width: min(420px, 96vw);
+  width: min(420px 96vw);
   position: relative;
   z-index: 1;
 }
 
 header {
-  width: 100%;
+  width: 100;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -87,17 +84,15 @@ header {
   border-bottom: 1px solid rgba(0, 255, 231, 0.2);
   padding-bottom: 10px;
 }
-
 header h1 {
   font-family: "Bebas Neue", sans-serif;
-  font-size: clamp(2.2rem, 10vw, 3.2rem);
+  font-size: clamp(2.2rem, 10vw, 4.2rem);
   letter-spacing: 0.15em;
   line-height: 1;
   text-shadow:
     0 0 20px var(--primary),
     0 0 60px rgba(0, 255, 231, 0.3);
 }
-
 .subtitle {
   font-size: 0.6rem;
   opacity: 0.5;
@@ -105,28 +100,24 @@ header h1 {
   text-transform: uppercase;
   margin-bottom: 4px;
 }
-
-/* Main circle display */
+/* main circle display  */
 .dial-container {
   position: relative;
   width: min(340px, 90vw);
   height: min(340px, 90vw);
   margin: 10px 0;
 }
-
 .dial-svg {
   width: 100%;
   height: 100%;
   transform: rotate(-225deg);
 }
-
 .dial-bg-track {
   fill: none;
   stroke: var(--mid);
   stroke-width: 12;
   stroke-linecap: round;
 }
-
 .dial-fill-track {
   fill: none;
   stroke: var(--primary);
@@ -134,12 +125,11 @@ header h1 {
   stroke-linecap: round;
   stroke-dasharray: 565;
   stroke-dashoffset: 565;
-  filter: drop-shadow(0 0 8px var(--primary));
+  filter: drop-shadow(0, 0, 8px var(--primary));
   transition:
     stroke-dashoffset 0.3s ease,
     stroke 0.3s ease;
 }
-
 .dial-center {
   position: absolute;
   inset: 0;
@@ -148,36 +138,32 @@ header h1 {
   align-items: center;
   justify-content: center;
 }
-
 .lux-value {
   font-family: "Bebas Neue", sans-serif;
-  font-size: clamp(3.5rem, 18vw, 5.5rem);
+  font-size: clamp(3.5rem, 18vh, 5.5rem);
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.02rem;
   text-shadow:
     0 0 30px var(--primary),
     0 0 80px rgba(0, 255, 231, 0.2);
   transition: color 0.3s ease;
 }
-
 .lux-unit {
   font-size: 0.75rem;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.3rem;
   opacity: 0.6;
   margin-top: -4px;
 }
-
 .lux-label {
   font-size: 0.55rem;
   letter-spacing: 0.25em;
   color: var(--accent);
   margin-top: 8px;
   min-height: 12px;
-  text-shadow: 0 0 10px var(--accent);
+  text-shadow: 0 0 1-px var(--accent);
   transition: opacity 0.3s;
 }
-
-/* Stats row */
+/* stats row */
 .stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -185,7 +171,6 @@ header h1 {
   width: 100%;
   margin: 10px 0;
 }
-
 .stat-card {
   background: var(--mid);
   border: 1px solid rgba(0, 255, 231, 0.1);
@@ -201,7 +186,7 @@ header h1 {
     0 calc(100% - 8px)
   );
 }
-
+/* this div makes stats kind of small */
 .stat-label {
   font-size: 0.45rem;
   letter-spacing: 0.2em;
@@ -209,19 +194,16 @@ header h1 {
   text-transform: uppercase;
   margin-bottom: 4px;
 }
-
 .stat-value {
   font-family: "Bebas Neue", sans-serif;
   font-size: 1.3rem;
   letter-spacing: 0.05em;
 }
-
-/* Log / sparkline */
+/* log sparkline */
 .log-section {
   width: 100%;
   margin-top: 6px;
 }
-
 .log-header {
   display: flex;
   justify-content: space-between;
@@ -231,13 +213,11 @@ header h1 {
   margin-bottom: 4px;
   text-transform: uppercase;
 }
-
 #sparkline {
   width: 100%;
   height: 50px;
   display: block;
 }
-
 .spark-line {
   fill: none;
   stroke: var(--primary);
@@ -254,7 +234,6 @@ header h1 {
   display: flex;
   gap: 4px;
 }
-
 .env-segment {
   flex: 1;
   height: 4px;
@@ -262,105 +241,7 @@ header h1 {
   transition: background 0.3s;
   position: relative;
 }
-
 .env-segment.active {
   background: var(--primary);
   box-shadow: 0 0 8px var(--primary);
-}
-
-.env-labels {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.42rem;
-  opacity: 0.35;
-  letter-spacing: 0.1em;
-  margin-top: 4px;
-}
-
-/* Buttons */
-.controls {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
-  width: 100%;
-}
-
-button {
-  flex: 1;
-  background: transparent;
-  border: 1px solid var(--primary);
-  color: var(--primary);
-  font-family: "Share Tech Mono", monospace;
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  padding: 10px 0;
-  cursor: pointer;
-  text-transform: uppercase;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 6px) 0,
-    100% 6px,
-    100% 100%,
-    6px 100%,
-    0 calc(100% - 6px)
-  );
-  transition:
-    background 0.2s,
-    color 0.2s,
-    box-shadow 0.2s;
-}
-
-button:hover,
-button:active {
-  background: var(--primary);
-  color: var(--bg);
-  box-shadow: 0 0 20px var(--primary);
-}
-
-button.danger {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-button.danger:hover {
-  background: var(--accent);
-  color: var(--bg);
-  box-shadow: 0 0 20px var(--accent);
-}
-
-/* Status */
-#status {
-  font-size: 0.55rem;
-  letter-spacing: 0.15em;
-  opacity: 0.5;
-  margin-top: 12px;
-  min-height: 14px;
-  text-align: center;
-}
-
-.dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  margin-right: 6px;
-  vertical-align: middle;
-}
-
-.dot.active {
-  background: var(--primary);
-  box-shadow: 0 0 6px var(--primary);
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
 }

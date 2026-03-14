@@ -14,13 +14,12 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>LUX<br />METER</h1>
+        <h1>Lux o matic</h1>
         <div style="text-align: right">
           <div class="subtitle">Ambient Light Sensor</div>
-          <div class="subtitle">v1.0 · Google Pixel</div>
+          <div class="subtitle">v1.0</div>
         </div>
       </header>
-
       <div class="dial-container">
         <svg class="dial-svg" viewBox="0 0 200 200">
           <defs>
@@ -47,11 +46,11 @@
         </svg>
         <div class="dial-center">
           <div class="lux-value" id="luxValue">---</div>
-          <div class="lux-unit">LUX</div>
-          <div class="lux-label" id="luxLabel">AWAITING SENSOR</div>
+          <div class="lux-unit">Lux</div>
+          <div class="lux-label" id="luxLable">Awaiting Sensor</div>
         </div>
       </div>
-
+      <!-- stats -->
       <div class="stats">
         <div class="stat-card">
           <div class="stat-label">Min</div>
@@ -66,18 +65,18 @@
           <div class="stat-value" id="maxVal">---</div>
         </div>
       </div>
-
+      <!-- log section -->
       <div class="log-section">
         <div class="log-header">
-          <span>HISTORY (60s)</span>
-          <span id="sampleCount">0 samples</span>
+          <span>History(60s)</span>
+          <span id="samepleCount">0 samples</span>
         </div>
         <svg id="sparkline" preserveAspectRatio="none" viewBox="0 0 300 50">
           <path id="sparkArea" class="spark-area" d="" />
           <path id="sparkPath" class="spark-line" d="" />
         </svg>
       </div>
-
+      <!-- env bar  -->
       <div class="env-bar">
         <div class="env-segment" id="seg0"></div>
         <div class="env-segment" id="seg1"></div>
@@ -87,24 +86,20 @@
         <div class="env-segment" id="seg5"></div>
       </div>
       <div class="env-labels">
-        <span>DARK</span>
-        <span>DIM</span>
-        <span>INDOOR</span>
-        <span>BRIGHT</span>
-        <span>OUTDOOR</span>
-        <span>DIRECT SUN</span>
+        <span>Dark</span>
+        <span>Dim</span>
+        <span>Indoor</span>
+        <span>Bright</span>
+        <span>Outdoor</span>
+        <span>Direct Sun</span>
       </div>
-
       <div class="controls">
-        <button id="startBtn" onclick="startSensor()">▶ START</button>
-        <button id="stopBtn" onclick="stopSensor()" style="display: none">
-          ■ STOP
-        </button>
-        <button class="danger" onclick="resetStats()">↺ RESET</button>
+        <button id="startBtn">▶ Start</button>
+        <button id="stopBtn">■ Stop</button>
+        <button class="danger">↺ Reset</button>
       </div>
-
       <div id="status">
-        <span class="dot" id="dot"></span>SENSOR NOT STARTED
+        <span class="dot" id="dot"></span>Sensor not Started
       </div>
     </div>
   </body>
