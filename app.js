@@ -92,3 +92,7 @@ function updateEnvBar(lux) {
     seg.classList.toggle("active", i <= activeIdx);
   }
 }
+function setStatus(msg, active) {
+  document.getElementById("status").innerHTML =
+    `<span class="dot${active ? " active" : ""}"></span>${msg}`;
+}
