@@ -96,45 +96,80 @@ function setStatus(msg, active) {
   document.getElementById("status").innerHTML =
     `<span class="dot${active ? " active" : ""}"></span>${msg}`;
 }
-async function startSensor() {
-  if (!("AmbientLightSensor" in window)) {
-    setStatus(
-      "AmbientLightSensor API NOT SUPPORTED ON THIS BROWSER/DEVICE",
-      false,
-    );
-    document.getElementById("luxLabel").textContent = "UNSUPPORTED";
-    return;
-  }
+// test function
+// Simulated sensor for PC testing
+function startSensor() {
+  let t = 0;
+  sensor = setInterval(() => {
+    // Generates a slowly drifting value with some noise
+    // Change this to whatever pattern you want to test
+    // const base = 300 + Math.sin(t * 0.05) * 250;
+    // Slowly rising (like sunrise)
+    const base = t * 2;
+    // Jumping between dark and bright
+    // const base = t % 60 < 30 ? 50 : 5000;
+    // Random spikes
+    // const base = Math.random() > 0.95 ? 80000 : 300;
+    const noise = (Math.random() - 0.5) * 40;
+    const lux = Math.max(0, base + noise);
+    updateDisplay(lux);
+    t++;
+  }, 200); // fires 5x per second, same as the real sensor
 
-  try {
-    // Request permission
-    const result = await navigator.permissions.query({
-      name: "ambient-light-sensor",
-    });
-    if (result.state === "denied") {
-      setStatus("PERMISSION DENIED — CHECK SITE SETTINGS", false);
-      return;
-    }
-
-    sensor = new AmbientLightSensor({ frequency: 5 });
-
-    sensor.addEventListener("reading", () => {
-      updateDisplay(sensor.illuminance);
-    });
-
-    sensor.addEventListener("error", (e) => {
-      setStatus(`SENSOR ERROR: ${e.error.name}`, false);
-      stopSensor();
-    });
-
-    sensor.start();
-    setStatus("READING AMBIENT LIGHT SENSOR...", true);
-    document.getElementById("startBtn").style.display = "none";
-    document.getElementById("stopBtn").style.display = "";
-  } catch (e) {
-    setStatus(`ERROR: ${e.message}`, false);
-  }
+  setStatus("SIMULATED SENSOR RUNNING...", true);
+  document.getElementById("startBtn").style.display = "none";
+  document.getElementById("stopBtn").style.display = "";
 }
+
+// function stopSensor() {
+//   if (sensor) {
+//     clearInterval(sensor);
+//     sensor = null;
+//   }
+//   setStatus("SENSOR STOPPED", false);
+//   document.getElementById("startBtn").style.display = "";
+//   document.getElementById("stopBtn").style.display = "none";
+// }
+
+// async function startSensor() {
+//   if (!("AmbientLightSensor" in window)) {
+//     setStatus(
+//       "AmbientLightSensor API NOT SUPPORTED ON THIS BROWSER/DEVICE",
+//       false,
+//     );
+//     document.getElementById("luxLabel").textContent = "UNSUPPORTED";
+//     return;
+//   }
+
+//   try {
+//     // Request permission
+//     const result = await navigator.permissions.query({
+//       name: "ambient-light-sensor",
+//     });
+//     if (result.state === "denied") {
+//       setStatus("PERMISSION DENIED — CHECK SITE SETTINGS", false);
+//       return;
+//     }
+
+//     sensor = new AmbientLightSensor({ frequency: 5 });
+
+//     sensor.addEventListener("reading", () => {
+//       updateDisplay(sensor.illuminance);
+//     });
+
+//     sensor.addEventListener("error", (e) => {
+//       setStatus(`SENSOR ERROR: ${e.error.name}`, false);
+//       stopSensor();
+//     });
+
+//     sensor.start();
+//     setStatus("READING AMBIENT LIGHT SENSOR...", true);
+//     document.getElementById("startBtn").style.display = "none";
+//     document.getElementById("stopBtn").style.display = "";
+//   } catch (e) {
+//     setStatus(`ERROR: ${e.message}`, false);
+//   }
+// }
 function stopSensor() {
   if (sensor) {
     sensor.stop();
