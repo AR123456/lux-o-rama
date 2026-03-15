@@ -96,3 +96,67 @@ function setStatus(msg, active) {
   document.getElementById("status").innerHTML =
     `<span class="dot${active ? " active" : ""}"></span>${msg}`;
 }
+async function startSensor() {
+  if (!("AmbientLightSensor" in window)) {
+    setStatus(
+      "AmbientLightSensor API NOT SUPPORTED ON THIS BROWSER/DEVICE",
+      false,
+    );
+    document.getElementById("luxLabel").textContent = "UNSUPPORTED";
+    return;
+  }
+
+  try {
+    // Request permission
+    const result = await navigator.permissions.query({
+      name: "ambient-light-sensor",
+    });
+    if (result.state === "denied") {
+      setStatus("PERMISSION DENIED — CHECK SITE SETTINGS", false);
+      return;
+    }
+
+    sensor = new AmbientLightSensor({ frequency: 5 });
+
+    sensor.addEventListener("reading", () => {
+      updateDisplay(sensor.illuminance);
+    });
+
+    sensor.addEventListener("error", (e) => {
+      setStatus(`SENSOR ERROR: ${e.error.name}`, false);
+      stopSensor();
+    });
+
+    sensor.start();
+    setStatus("READING AMBIENT LIGHT SENSOR...", true);
+    document.getElementById("startBtn").style.display = "none";
+    document.getElementById("stopBtn").style.display = "";
+  } catch (e) {
+    setStatus(`ERROR: ${e.message}`, false);
+  }
+}
+function stopSensor() {
+  if (sensor) {
+    sensor.stop();
+    sensor = null;
+  }
+  setStatus("SENSOR STOPPED", false);
+  document.getElementById("startBtn").style.display = "";
+  document.getElementById("stopBtn").style.display = "none";
+}
+
+function resetStats() {
+  minLux = Infinity;
+  maxLux = -Infinity;
+  sumLux = 0;
+  countLux = 0;
+  readings = [];
+  document.getElementById("minVal").textContent = "---";
+  document.getElementById("maxVal").textContent = "---";
+  document.getElementById("avgVal").textContent = "---";
+  document.getElementById("sampleCount").textContent = "0 samples";
+  document.getElementById("sparkPath").setAttribute("d", "");
+  document.getElementById("sparkArea").setAttribute("d", "");
+  for (let i = 0; i < 6; i++)
+    document.getElementById(`seg${i}`).classList.remove("active");
+}
