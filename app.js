@@ -4,6 +4,7 @@ let readings = [];
 let minLux = Infinity,
   maxLux = -Infinity,
   sumLux = 0;
+let countLux = 0;
 const MAX_HISTORY = 120;
 const ENV_LABELS = ["DARK", "DIM", "INDOOR", "BRIGHT", "OUTDOOR", "DIRECT SUN"];
 
@@ -31,7 +32,7 @@ function updateDisplay(lux) {
   const val = document.getElementById("luxValue");
   const label = document.getElementById("luxLabel");
   const dial = document.getElementById("dialFill");
-  val.textContent - lux < 10 ? lex.toFixed(1) : Math.round(lux);
+  val.textContent = lux < 10 ? lux.toFixed(1) : Math.round(lux);
   label.textContent = getLuxLabel(lux);
   const color = getDialColor(lux);
   val.style.color = color;
@@ -172,7 +173,7 @@ function startSensor() {
 // }
 function stopSensor() {
   if (sensor) {
-    sensor.stop();
+    clearInterval(sensor); // ✅ not sensor.stop()
     sensor = null;
   }
   setStatus("SENSOR STOPPED", false);
