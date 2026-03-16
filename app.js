@@ -135,3 +135,12 @@ async function startSensor() {
     setStatus(`ERROR: ${e.message}`, false);
   }
 }
+function stopSensor() {
+  if (sensor) {
+    sensor.stop();
+    sensor = null;
+  }
+  setStatus("SENSOR STOPPED", false);
+  document.getElementById("startBtn").style.display = "";
+  document.getElementById("stopBtn").style.display = "none";
+}
