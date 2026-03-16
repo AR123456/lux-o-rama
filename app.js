@@ -144,3 +144,19 @@ function stopSensor() {
   document.getElementById("startBtn").style.display = "";
   document.getElementById("stopBtn").style.display = "none";
 }
+
+function resetStats() {
+  minLux = Infinity;
+  maxLux = -Infinity;
+  sumLux = 0;
+  countLux = 0;
+  readings = [];
+  document.getElementById("minVal").textContent = "---";
+  document.getElementById("maxVal").textContent = "---";
+  document.getElementById("avgVal").textContent = "---";
+  document.getElementById("sampleCount").textContent = "0 samples";
+  document.getElementById("sparkPath").setAttribute("d", "");
+  document.getElementById("sparkArea").setAttribute("d", "");
+  for (let i = 0; i < 6; i++)
+    document.getElementById(`seg${i}`).classList.remove("active");
+}
